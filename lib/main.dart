@@ -79,15 +79,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   
   searchContacts(){
-    List _contacts = [];
+    List<Contact> _contacts = [];
     _contacts.addAll(contacts);
     if(searchCon.text.isNotEmpty){
+      _contacts.retainWhere((contact){
+        String searchInput = searchCon.text.toLowerCase();
+        String contactName = contact.displayName!.toLowerCase();
+        return contactName.contains(searchInput);
+      });
       
+      setState(() {
+        contactsSearch = _contacts;
+      });
+    }
+    else if (searchCon.text.isEmpty){
+      setState(() {
+        contactsSearch = contacts;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    bool notSearching = searchCon.text.isEmpty;
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -129,9 +143,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
             Expanded(child: ListView.builder(
               shrinkWrap: true,
-              itemCount: contacts.length,
+              itemCount: notSearching == true ? contacts.length : contactsSearch.length,
               itemBuilder: (context, index){
-                Contact contact = contacts[index];
+                Contact contact = notSearching == true ? contacts[index] : contactsSearch[index];
                 var avatar = contact.avatar;
                 return ListTile(
                   title: Text(contact.displayName.toString()),
