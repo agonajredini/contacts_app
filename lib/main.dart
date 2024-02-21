@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp( MyApp());
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
 
 
-  //var items = <String>[];
+  var items = <String>[];
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
