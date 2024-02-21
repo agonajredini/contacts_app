@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:contacts_service/contacts_service.dart';  
+import 'package:contacts_service/contacts_service.dart'; 
+import 'package:collection/collection.dart';
 
 void main() {
   runApp(const MyApp());
@@ -71,6 +72,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  String flattenPhoneNumber(String phoneString){
+    return phoneString.replaceAllMapped(RegExp(r'^(\+)|\D'), (Match m) {
+      return m[0] == "+" ? "+" : "";
+    });
+  }
+
   getAllContacts() async {
     List<Contact> _contacts = await ContactsService.getContacts();
     setState(() {
@@ -84,8 +91,23 @@ class _MyHomePageState extends State<MyHomePage> {
     if(searchCon.text.isNotEmpty){
       _contacts.retainWhere((contact){
         String searchInput = searchCon.text.toLowerCase();
+        String searchInputFlatten = flattenPhoneNumber(searchInput);
         String contactName = contact.displayName!.toLowerCase();
-        return contactName.contains(searchInput);
+        bool nameMatches = contactName.contains(searchInput);
+        if(nameMatches == true){
+          return true;
+        }
+
+        if(searchInputFlatten.isEmpty){
+          return false;
+        }
+        
+        var phone = contact.phones!.firstWhereOrNull((phn){
+          String phnFlatten = flattenPhoneNumber(phn.value.toString());
+          return phnFlatten.contains(searchInputFlatten);
+        });
+        return phone != null;
+
       });
       
       setState(() {
