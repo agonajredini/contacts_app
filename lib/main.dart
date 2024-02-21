@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Contacts App',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool notSearching = searchCon.text.isEmpty;
+    bool searching = searchCon.text.isNotEmpty;
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -143,9 +143,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
             Expanded(child: ListView.builder(
               shrinkWrap: true,
-              itemCount: notSearching == true ? contacts.length : contactsSearch.length,
+              itemCount: searching == true ?contactsSearch.length : contacts.length,
               itemBuilder: (context, index){
-                Contact contact = notSearching == true ? contacts[index] : contactsSearch[index];
+                Contact contact = searching == true ?contactsSearch[index] : contacts[index];
                 var avatar = contact.avatar;
                 return ListTile(
                   title: Text(contact.displayName.toString()),
