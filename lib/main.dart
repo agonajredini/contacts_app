@@ -58,11 +58,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   
   List<Contact> contacts = [];
+  List<Contact> contactsSearch = [];
+
+  TextEditingController searchCon = TextEditingController();
 
   @override void initState() {
     // TODO: implement initState
     super.initState();
     getAllContacts();
+    searchCon.addListener(() {
+      searchContacts();
+    });
   }
 
   getAllContacts() async {
@@ -70,6 +76,14 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       contacts = _contacts;
     });
+  }
+  
+  searchContacts(){
+    List _contacts = [];
+    _contacts.addAll(contacts);
+    if(searchCon.text.isNotEmpty){
+      
+    }
   }
 
   @override
@@ -95,7 +109,25 @@ class _MyHomePageState extends State<MyHomePage> {
         // in the middle of the parent.
         child: Column(
           children: <Widget>[
-            ListView.builder(
+            Container(
+              child: TextField(
+                controller: searchCon,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor
+                    )
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Theme.of(context).primaryColor,
+                  )
+                ),
+              ),
+            ),
+
+            Expanded(child: ListView.builder(
               shrinkWrap: true,
               itemCount: contacts.length,
               itemBuilder: (context, index){
@@ -113,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   CircleAvatar(child: Text(contact.initials()),),
                 );
               }
-            )
+            ))
           ],
         ),
       ),
