@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart'; 
 import 'package:contacts_app/details.dart';
 import 'package:collection/collection.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,21 +19,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Contacts App',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         //useMaterial3: true,
       ),
@@ -43,16 +29,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -68,12 +44,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override void initState() {
     super.initState();
-    getAllContacts();
-    searchCon.addListener(() {
+    getPermissions();
+    
+  }
+  //Merr Permission
+  getPermissions() async {
+    if(await Permission.contacts.request().isGranted){
+      getAllContacts();
+      searchCon.addListener(() {
       searchContacts();
     });
+    }
   }
 
+  //Formaton krejt numrin me nji String 
   String flattenPhoneNumber(String phoneString){
     return phoneString.replaceAllMapped(RegExp(r'^(\+)|\D'), (Match m) {
       return m[0] == "+" ? "+" : "";
@@ -87,11 +71,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
   
+
   searchContacts(){
     List<Contact> _contacts = [];
     _contacts.addAll(contacts);
     if(searchCon.text.isNotEmpty){
-      _contacts.retainWhere((contact){
+      _contacts.retainWhere((contact){ //Nese search bar nuk eshte empty largon prej liste kontaktet
         String searchInput = searchCon.text.toLowerCase();
         String searchInputFlatten = flattenPhoneNumber(searchInput);
         String contactName = contact.displayName!.toLowerCase();
@@ -104,8 +89,9 @@ class _MyHomePageState extends State<MyHomePage> {
           return false;
         }
         
+        //Search me numer
         var phone = contact.phones!.firstWhereOrNull((phn){
-          String phnFlatten = flattenPhoneNumber(phn.value.toString());
+          String phnFlatten = flattenPhoneNumber(phn.value.toString()); //Formaton numrin
           return phnFlatten.contains(searchInputFlatten);
         });
         return phone != null;
@@ -113,12 +99,12 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       
       setState(() {
-        contactsSearch = _contacts;
+        contactsSearch = _contacts; //I nxjerr kontaktet e kerkuara
       });
     }
     else if (searchCon.text.isEmpty){
       setState(() {
-        contactsSearch = contacts;
+        contactsSearch = contacts; //I nxjerr krejt kontaktet (nese search bar eshte empty)
       });
     }
   }
@@ -126,20 +112,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     bool searching = searchCon.text.isNotEmpty;
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title,
         style: const TextStyle(
           fontSize: 28.0,
@@ -165,8 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
           children: <Widget>[
             TextField(
@@ -187,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
             Expanded(child: ListView.builder(
               shrinkWrap: true,
-              itemCount: searching == true ?contactsSearch.length : contacts.length,
+              itemCount: searching == true ?contactsSearch.length : contacts.length, //Merr itemCount mvaresisht nese ije tu be search ose jo
               itemBuilder: (context, index){
                 Contact contact = searching == true ?contactsSearch[index] : contacts[index];
                 var avatar = contact.avatar;
@@ -196,11 +170,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context)=>ContactDetails(
                         contact,
-                        onContactDelete: (Contact _contact){
+                        onContactDelete: (Contact _contact){ //Nese fshin kontaktin nxjerr listen e re
                           getAllContacts();
                           Navigator.of(context).pop();
                         },
-                        onContactUpdate: (Contact _contact){
+                        onContactUpdate: (Contact _contact){ //Nese edit kontaktin nxjerr listen e re
                          getAllContacts();
                         },
                         )
@@ -214,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   CircleAvatar(
                     backgroundImage: MemoryImage(avatar!),
                   ) :
-                  CircleAvatar(child: Text(contact.initials()),),
+                  CircleAvatar(child: Text(contact.initials()),), //Avatare mvaresisht nese ka foto ose jo
                 );
               }
             ))

@@ -25,7 +25,7 @@ class _ContactDetailsState extends State<ContactDetails> {
       'Delete'
     ];
 
-    deleteConfirmation(){
+    deleteConfirmation(){ //Confirmation boxi nese dum ta fshijme kontaktin
       Widget cancel = TextButton (
         style: TextButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 187, 187, 187),
@@ -45,7 +45,7 @@ class _ContactDetailsState extends State<ContactDetails> {
       ),
         child: const Text('Delete'),
         onPressed: () async{
-          await ContactsService.deleteContact(widget.contact);
+          await ContactsService.deleteContact(widget.contact); //Fshije
           widget.onContactDelete(widget.contact);
           // ignore: use_build_context_synchronously
           Navigator.of(context).pop();
@@ -76,7 +76,7 @@ class _ContactDetailsState extends State<ContactDetails> {
           try{
             Contact updateContact = await ContactsService.openExistingContact(widget.contact);
             setState(() {
-              widget.contact = updateContact;
+              widget.contact = updateContact; //Edit kontaktin
             });
             widget.onContactUpdate(widget.contact);
           }
@@ -95,15 +95,15 @@ class _ContactDetailsState extends State<ContactDetails> {
           break;
       }
     }
-    var avatar2 = widget.contact.avatar;
+    var avatar2 = widget.contact.avatar; 
     var bdaystr = "";
     var bdayToStr = "";
 
-    DateFormat dateFormat = DateFormat("dd-MM-yyyy");
+    DateFormat dateFormat = DateFormat("dd-MM-yyyy"); //Format ditlindjen
     DateTime? bday = widget.contact.birthday;
     if(bday != null){
       bdaystr="birthday";
-      bdayToStr = dateFormat.format(bday).toString();
+      bdayToStr = dateFormat.format(bday).toString(); //Kthen ditlindjen ne String per ta perdor me .map
     }
     return Scaffold(
       body: SafeArea(
@@ -120,7 +120,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                     backgroundImage: MemoryImage(avatar2),
                     radius: 60.0 
                   ) :
-                  CircleAvatar(
+                  CircleAvatar( //Shfaq avatarin mvaresisht nese ka foto (ose inicialet)
                     backgroundColor: const Color.fromARGB(255, 126, 124, 124),
                     radius: 60.0,
                     child: Text(
@@ -137,7 +137,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back),
+                        icon: const Icon(Icons.arrow_back), //Butoni back
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -167,7 +167,7 @@ class _ContactDetailsState extends State<ContactDetails> {
             Center(
                       child:
                        Text(
-                        widget.contact.displayName.toString(),
+                        widget.contact.displayName.toString(), //Shfaq Emrin
                         style: const TextStyle(
                           fontSize: 25.0,
                           fontWeight: FontWeight.bold
@@ -185,7 +185,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                           (i) => Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: ListTile(
+                            child: ListTile( //Shfaq listen e numrave
                               title: Text(i.label ?? "", style: const TextStyle(fontSize: 19.0),),
                               subtitle: Text(i.value ?? "", style: const TextStyle(
                                 fontSize: 20.0,
@@ -203,7 +203,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                           (i) => Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: ListTile(
+                            child: ListTile( //Shfaq email-in
                               title: const Text("email", style: TextStyle(fontSize: 19.0),),
                               subtitle: Text(i.value ?? "", style: const TextStyle(
                                 fontSize: 20.0,
@@ -221,7 +221,7 @@ class _ContactDetailsState extends State<ContactDetails> {
                           (i) => Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: ListTile(
+                            child: ListTile(//Shfaq ditlindjen
                               title: Text(bdaystr, style: const TextStyle(fontSize: 19.0),),
                               subtitle: Text(bdayToStr, style: const TextStyle(
                                 fontSize: 20.0,
