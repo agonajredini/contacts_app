@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart'; 
 import 'package:contacts_app/details.dart';
@@ -135,10 +137,14 @@ class _MyHomePageState extends State<MyHomePage> {
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
-        backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(widget.title,
+        style: const TextStyle(
+          fontSize: 28.0,
+          fontWeight: FontWeight.bold
+        ),),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromARGB(183, 3, 168, 244),
@@ -152,7 +158,6 @@ class _MyHomePageState extends State<MyHomePage> {
               case FormOperationErrorCode.FORM_COULD_NOT_BE_OPEN:
               case FormOperationErrorCode.FORM_OPERATION_UNKNOWN_ERROR:
               case null:
-              print(e.toString());
 
             }
           } 
@@ -164,21 +169,19 @@ class _MyHomePageState extends State<MyHomePage> {
         // in the middle of the parent.
         child: Column(
           children: <Widget>[
-            Container(
-              child: TextField(
-                controller: searchCon,
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor
-                    )
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Theme.of(context).primaryColor,
+            TextField(
+              controller: searchCon,
+              decoration: InputDecoration(
+                hintText: 'Search',
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryColor
                   )
                 ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Theme.of(context).primaryColor,
+                )
               ),
             ),
 
@@ -191,7 +194,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 return ListTile(
                   onTap: (){
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context)=>ContactDetails(contact)
+                      builder: (BuildContext context)=>ContactDetails(
+                        contact,
+                        onContactDelete: (Contact _contact){
+                          getAllContacts();
+                          Navigator.of(context).pop();
+                        },
+                        onContactUpdate: (Contact _contact){
+                         getAllContacts();
+                        },
+                        )
                       ));
                   },
                   title: Text(contact.displayName.toString()),
