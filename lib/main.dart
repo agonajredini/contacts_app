@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart'; 
+import 'package:contacts_app/details.dart';
 import 'package:collection/collection.dart';
 
 void main() {
@@ -188,6 +189,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 Contact contact = searching == true ?contactsSearch[index] : contacts[index];
                 var avatar = contact.avatar;
                 return ListTile(
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context)=>ContactDetails(contact)
+                      ));
+                  },
                   title: Text(contact.displayName.toString()),
                   subtitle: Text(
                     contact.phones!.elementAt(0).value.toString()
