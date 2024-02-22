@@ -64,7 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController searchCon = TextEditingController();
 
   @override void initState() {
-    // TODO: implement initState
     super.initState();
     getAllContacts();
     searchCon.addListener(() {
@@ -139,6 +138,25 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromARGB(183, 3, 168, 244),
+        onPressed: () async {
+          try {
+            await ContactsService.openContactForm();
+            getAllContacts();
+                    } on FormOperationException catch (e) {
+            switch(e.errorCode){
+              case FormOperationErrorCode.FORM_OPERATION_CANCELED:
+              case FormOperationErrorCode.FORM_COULD_NOT_BE_OPEN:
+              case FormOperationErrorCode.FORM_OPERATION_UNKNOWN_ERROR:
+              case null:
+              print(e.toString());
+
+            }
+          } 
+        },
+        child: const Icon(Icons.add),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
